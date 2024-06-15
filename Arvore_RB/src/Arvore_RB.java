@@ -1,123 +1,168 @@
 public class Arvore_RB {
-    No raiz;
+  No raiz = null;
 
-    void Norutor() 
-    {
-        this.raiz = null;
-    }
+  void inserir(int valor) {
+      No no = new No(valor, "vermelho");
 
-    void inserir(int valor) {
-        No no = new No(valor, "vermelho");
-       
-        if (this.raiz == null) {
+      if (this.raiz == null) {
           this.raiz = no;
           no.direito = this.criaNoFolha(no);
           no.esquerdo = this.criaNoFolha(no);
- 
-        } else {
-          No noAtual  = this.raiz;
-         
-          while (true) {
-           
-            if (valor < noAtual.valor) {
-              if (noAtual.esquerdo.valor.equals(null)) {               
-                noAtual.esquerdo = no;
-                no.pai = noAtual;
-                break;
-              }
-              noAtual = noAtual.esquerdo;
-            } else {
+      } else {
+          No noAtual = raiz;
 
-            if (noAtual.direito.valor.equals(null)) {
-                noAtual.direito = no;
-                no.pai = noAtual;
-                break;
+          while (true) {
+              if (valor < noAtual.valor) {
+                  if (noAtual.esquerdo.valor == null) {
+                      noAtual.esquerdo = no;
+                      no.pai = noAtual;
+                      break;
+                  }
+                  noAtual = noAtual.esquerdo;
+              } else {
+                  if (noAtual.direito.valor == null) {
+                      noAtual.direito = no;
+                      no.pai = noAtual;
+                      break;
+                  }
+                  noAtual = noAtual.direito;
               }
-              noAtual = noAtual.direito;
-            }
           }
           no.direito = this.criaNoFolha(no);
           no.esquerdo = this.criaNoFolha(no);
           this.verificaArvore(no);
-          this.CalculatePosition(this.getraiz());
-        }
       }
-    No criaNoFolha(No pai) {
-        No no = new No(null, null);
-        no.valor = null;
-        no.cor = "preto";
-        no.pai = pai;
-        return no;
-    }
-    void verificaArvore(No no) {
-        while (
-          no.pai != this.raiz &&
-          no != this.raiz &&
-          no.cor == "vermelho" &&
-          no.pai.cor == "vermelho"
-        ) {
+  }
+
+  No criaNoFolha(No pai) {
+      No no = new No(null, "preto");
+      no.pai = pai;
+      return no;
+  }
+
+  void verificaArvore(No no) {
+      while (no != raiz && no.pai != null && no.pai.cor.equals("vermelho")) {
+          if (no.pai.pai == null) break;
 
           if (no.pai == no.pai.pai.esquerdo) {
-            No tio = no.pai.pai.direito;
-            if (tio && tio.cor.compareToIgnoreCase("vermelho")) {
-              no.pai.cor = "black";
-              tio.cor = "black";
-              no.pai.pai.cor = "vermelho";
-              no = no.pai.pai;
-            } else {
-              if (no == no.pai.direito) {
-                typeText(`O nó é filho direito`);
-                no = no.pai;
-                typeText(`Rotacionando para a esquerda`);
-                this.rotateesquerdo(no);
+              No tio = no.pai.pai.direito;
+              if (tio != null && tio.cor.equals("vermelho")) {
+                  no.pai.cor = "preto";
+                  tio.cor = "preto";
+                  no.pai.pai.cor = "vermelho";
+                  no = no.pai.pai;
+              } else {
+                  if (no == no.pai.direito) {
+                      no = no.pai;
+                      this.rotacionaE(no);
+                  }
+                  no.pai.cor = "preto";
+                  no.pai.pai.cor = "vermelho";
+                  this.rotacionaD(no.pai.pai);
               }
-              typeText(`O nó é um filho esquerdo`);
-              typeText(`Alterando cor de ${no.pai.value} para Preto`);
-              typeText(
-                `Alterando cor de ${no.pai.pai.value} para Vermelho`
-              );
-              no.pai.cor = "black";
-              no.pai.pai.cor = "vermelho";
-              typeText(`Rotacionando para a direita`);
-              this.rotatedireito(no.pai.pai);
-            }
-          } else if (no.pai != this.raiz) {
-            typeText(`O pai de ${no.value} é um filho direito`);
-            No tio = no.pai.pai.esquerdo;
-            if (tio && tio.cor === "vermelho") {
-              typeText(`O nó possui tio vermelho`);
-              typeText(
-                `Alterando cores de ${no.pai.value} e ${tio.value} para Preto`
-              );
-              typeText(
-                `Alterando cor de ${no.pai.pai.value} para Vermelho`
-              );
-              no.pai.cor = "black";
-              tio.cor = "black";
-              no.pai.pai.cor = "vermelho";
-              no = no.pai.pai;
-            } else {
-              typeText("O nó não possui tio vermelho");
-              if (no === no.pai.esquerdo) {
-                typeText("O nó é filho esquerdo");
-                no = no.pai;
-                typeText(`Rotacionando para a direita`);
-                this.rotatedireito(no);
+          } else {
+              No tio = no.pai.pai.esquerdo;
+              if (tio != null && tio.cor.equals("vermelho")) {
+                  no.pai.cor = "preto";
+                  tio.cor = "preto";
+                  no.pai.pai.cor = "vermelho";
+                  no = no.pai.pai;
+              } else {
+                  if (no == no.pai.esquerdo) {
+                      no = no.pai;
+                      this.rotacionaD(no);
+                  }
+                  no.pai.cor = "preto";
+                  no.pai.pai.cor = "vermelho";
+                  this.rotacionaE(no.pai.pai);
               }
-              typeText("O nó é filho direito");
-              typeText(
-                `Alterando cores de ${no.pai.value} para preto e ${no.pai.pai.value} para vermelho`
-              );
-              no.pai.cor = "black";
-              no.pai.pai.cor = "vermelho";
-              typeText("Rotacionando para a esquerda");
-              this.rotateesquerdo(no.pai.pai);
-            }
           }
-        }
-        // define cor de raiz como preto SEMPRE, como tava vermelho naquele dia? magia negra produnda e profana
-        this.raiz.cor = "black";
-        typeText("Fim da verificação...");
+      }
+      this.raiz.cor = "preto";
+  }
+
+  No busca(int valor, No no) {
+      if (no != null) {
+          if (no.getValor() == valor) {
+              return no;
+          }
+          if (valor > no.getValor()) {
+              return this.busca(valor, no.direito);
+          } else {
+              return this.busca(valor, no.esquerdo);
+          }
+      } else {
+          return null;
+      }
+  }
+
+  void rotacionaD(No no) {
+      No esquerdo = no.esquerdo;
+      no.esquerdo = esquerdo.direito;
+      if (esquerdo.direito != null) {
+          esquerdo.direito.pai = no;
+      }
+      esquerdo.pai = no.pai;
+      if (no.pai == null) {
+          this.raiz = esquerdo;
+      } else if (no == no.pai.direito) {
+          no.pai.direito = esquerdo;
+      } else {
+          no.pai.esquerdo = esquerdo;
+      }
+      esquerdo.direito = no;
+      no.pai = esquerdo;
+  }
+
+  void rotacionaE(No no) {
+      No direito = no.direito;
+      no.direito = direito.esquerdo;
+      if (direito.esquerdo != null) {
+          direito.esquerdo.pai = no;
+      }
+      direito.pai = no.pai;
+      if (no.pai == null) {
+          this.raiz = direito;
+      } else if (no == no.pai.esquerdo) {
+          no.pai.esquerdo = direito;
+      } else {
+          no.pai.direito = direito;
+      }
+      direito.esquerdo = no;
+      no.pai = direito;
+  }
+
+  No getRaiz() {
+      return this.raiz;
+  }
+
+  // Classe No
+  class No {
+      Integer valor;
+      String cor;
+      No pai;
+      No esquerdo;
+      No direito;
+
+      No(Integer valor, String cor) {
+          this.valor = valor;
+          this.cor = cor;
+          this.pai = null;
+          this.esquerdo = null;
+          this.direito = null;
       }
 
+      Integer getValor() {
+          return this.valor;
+      }
+
+      No getFilhoE() {
+          return this.esquerdo;
+      }
+
+      No getFilhoD() {
+          return this.direito;
+      }
+  }
 }
+
